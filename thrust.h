@@ -30,13 +30,13 @@ public:
    // Get rotation in radians per second
    double rotation() const
    {
-      return 99.9;
+      return 0.1;
    }
 
    // get main engine thrust in  m / s ^ 2
    double mainEngineThrust() const
    {
-      return 99.9;
+      return 45000/15103;
    }
 
    // reflect what is firing

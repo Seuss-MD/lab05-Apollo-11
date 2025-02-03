@@ -29,17 +29,22 @@ class Lander
    
 public:
   // to create a lander, we need to know something about the board
-  Lander(const Position & posUpperRight) : status(DEAD), fuel(-99.0) {  }
+  Lander(const Position & posUpperRight) : status(PLAYING), fuel(100.0), 
+                                           pos(posUpperRight.getX(), posUpperRight.getY()),
+                                           angle(Angle())
+                                           {
+                                            Velocity(v);
+                                           }
 
   // reset the lander and its position
   void reset(const Position& posUpperRight);
 
   // get the status of the lander
-  bool     isDead()         const { return true; }
-  bool     isLanded()       const { return true; }
-  bool     isFlying()       const { return true; }
-  Position getPosition()    const { return pos;  }
-  double   getSpeed()       const { return 99.9; }
+  bool     isDead()         const { if (status == DEAD) return true; }
+  bool     isLanded()       const { if (status == SAFE) return true; }
+  bool     isFlying()       const { if (status == PLAYING) return true; }
+  Position getPosition()    const { return pos;}
+  double   getSpeed()       const { return v.getSpeed(); }
   int      getFuel()        const { return -99;  }
   int      getWidth()       const { return 99;   }
   double   getMaxSpeed()    const { return 99.9; }
