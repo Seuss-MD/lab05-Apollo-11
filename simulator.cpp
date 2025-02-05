@@ -9,8 +9,12 @@
 #include "uiDraw.h"      // for RANDOM and DRAW*
 #include "ground.h"      // for GROUND
 #include "test.h"        // for the unit tests
+#include "star.h"        // for drawStar
 #include <cmath>         // for SQRT
 #include <cassert>       // for ASSERT
+
+#include <iostream>   // for now
+#include <vector>
 using namespace std;
 
 /*************************************************************************
@@ -24,7 +28,13 @@ public:
    Simulator(const Position& posUpperRight) :
       ground(posUpperRight),
       posLander(posUpperRight.getX() / 2.0, posUpperRight.getY() / 2.0),
-      posStar(300.0, 300.0) {
+      width(posUpperRight.getX()), height(posUpperRight.getY())
+   {
+      //star.reset(width, height);
+      for (Star star : starVect)
+      {
+         star.reset(width, height);
+      };
    }
 
    // display stuff on the screen
@@ -35,7 +45,11 @@ public:
    void turnLeft() { a.add(0.05); }
 
    // blink phase for star
-   void blink() { phase += 10; }
+   void blink() { phase++; }
+
+   // get width and height
+   double getWidth() { return width; }
+   double getHeight() { return height; }
 
 private:
    unsigned char phase = 0;
@@ -44,6 +58,10 @@ private:
    Position posUpperRight;
    Position posLander;
    Position posStar;
+   //Star star;
+   vector<Star> starVect [50];
+   double width;
+   double height;
 };
 
 /**********************************************************
@@ -61,7 +79,11 @@ void Simulator::display()
    gout.drawLander(posLander, a.getRadians());
 
    // draw a star
-   gout.drawStar(posStar, phase);
+   for (int i = 0; i < 3; i++)
+   {
+      star.draw(gout);
+      star.reset(getWidth(), getHeight());
+   }
 }
 
 
