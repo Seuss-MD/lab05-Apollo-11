@@ -8,9 +8,7 @@
  ************************************************************************/
 
 #pragma once
-#include <cmath> //for sqrt, sin, cos
-#include "angle.h"
-#include "acceleration.h"
+
 
  // for unit tests
 class TestPosition;
@@ -35,8 +33,8 @@ class Velocity
 
 public:
    // constructors
-   Velocity() : dx(0.0), dy(0.0) {}
-   Velocity(double dx, double dy) : dx(dx), dy(dy) {}
+   Velocity()                       : dx(0.0), dy(0.0) {}
+   Velocity(double dx, double dy)   : dx(dx), dy(dy)   {}
 
    // getters
    double getDX()       const { return dx; }
