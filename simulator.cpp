@@ -30,11 +30,13 @@ public:
       posLander(posUpperRight.getX() / 2.0, posUpperRight.getY() / 2.0),
       width(posUpperRight.getX()), height(posUpperRight.getY())
    {
-      //star.reset(width, height);
-      for (Star star : starVect)
+      // Create 50 new stars with random positions
+      for (int i = 0; i < 50; i++)
       {
-         star.reset(width, height);
-      };
+         Star newStar;
+         newStar.reset(width, height);
+         starVect.push_back(newStar);
+      }
    }
 
    // display stuff on the screen
@@ -58,8 +60,7 @@ private:
    Position posUpperRight;
    Position posLander;
    Position posStar;
-   //Star star;
-   vector<Star> starVect [50];
+   vector<Star> starVect;
    double width;
    double height;
 };
@@ -72,18 +73,17 @@ void Simulator::display()
 {
    ogstream gout;
 
+   // draw a star
+   for (int i = 0; i < 50; i++)
+   {
+      starVect[i].draw(gout);
+   }
+
    // draw the ground
    ground.draw(gout);
 
    // draw the lander
    gout.drawLander(posLander, a.getRadians());
-
-   // draw a star
-   for (int i = 0; i < 3; i++)
-   {
-      star.draw(gout);
-      star.reset(getWidth(), getHeight());
-   }
 }
 
 
