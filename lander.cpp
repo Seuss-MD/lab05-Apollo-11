@@ -47,17 +47,21 @@ void Lander :: draw(const Thrust & thrust, ogstream & gout) const
  ***************************************************************/
 Acceleration Lander :: input(const Thrust& thrust, double gravity)
 {
+   Acceleration acceleration = Acceleration();
+
    if (thrust.isClock())
-   {
-      angle.add(thrust.rotation());
-   }
-   if (thrust.isCounter())
    {
       angle.add(-1 * thrust.rotation());
    }
+   if (thrust.isCounter())
+   {
+      angle.add(thrust.rotation());
+   }
+   if (thrust.isMain())
+   {
+      acceleration.set(angle, thrust.mainEngineThrust());
+   }
    
-   Acceleration acceleration = Acceleration();
-   acceleration.set(angle, thrust.mainEngineThrust());
    acceleration.addDDY(gravity);
 
    return acceleration;

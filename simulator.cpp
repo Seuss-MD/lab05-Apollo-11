@@ -19,7 +19,7 @@
 #include <vector>
 using namespace std;
 
-#define GRAVITY 1.62;
+#define GRAVITY 1.62
 
 /*************************************************************************
  * SIMULATOR
@@ -51,23 +51,11 @@ public:
    // display stuff on the screen
    void display();
 
-   // turn
-   void moveRight(const Interface* pUI)
+   // move the lander based on input
+   void move(const Interface* pUI)
    {
       thrust.set(pUI);
-      lander.input(thrust, 1.62);  //gravity
-   }
-   void moveLeft(const Interface* pUI)
-   {
-      thrust.set(pUI);
-      lander.input(thrust, 1.62);  //gravity
-   }
-
-   //move
-   void moveUp(const Interface* pUI)
-   {
-      thrust.set(pUI);
-      lander.input(thrust, 1.62);  //gravity
+      lander.input(thrust, GRAVITY);  //gravity
    }
 
    // blink phase for star
@@ -109,6 +97,7 @@ void Simulator::display()
    ground.draw(gout);
 
    // draw the lander
+   lander.coast(lander.input(thrust, GRAVITY), 0.1);
    lander.draw(thrust, gout);
 }
 
@@ -127,12 +116,7 @@ void callBack(const Interface* pUI, void* p)
    pSimulator->display();
 
    // handle input
-   if (pUI->isRight())
-      pSimulator->moveRight(pUI);   // rotate right here and move right
-   if (pUI->isLeft())
-      pSimulator->moveLeft(pUI);   // rotate left here and move left
-   if (pUI->isDown())
-      pSimulator->moveUp(pUI);     // slow down/move up
+   pSimulator->move(pUI);
 
    // change phase
    pSimulator->blink();
