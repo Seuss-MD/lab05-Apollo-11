@@ -10,12 +10,16 @@
 #include "ground.h"      // for GROUND
 #include "test.h"        // for the unit tests
 #include "star.h"        // for drawStar
+#include "lander.h"      // for lander
+#include "thrust.h"      // for thrust
 #include <cmath>         // for SQRT
 #include <cassert>       // for ASSERT
 
 #include <iostream>   // for now
 #include <vector>
 using namespace std;
+
+#define GRAVITY 1.62;
 
 /*************************************************************************
  * SIMULATOR
@@ -27,8 +31,10 @@ public:
    // set up the simulator and element positions
    Simulator(const Position& posUpperRight) :
       ground(posUpperRight),
-      posLander(posUpperRight.getX() / 2.0, posUpperRight.getY() / 2.0),
-      width(posUpperRight.getX()), height(posUpperRight.getY())
+      //posLander(posUpperRight.getX() / 2.0, posUpperRight.getY() / 2.0),
+      width(posUpperRight.getX()), height(posUpperRight.getY()),
+      lander(posUpperRight),
+      thrust()
    {
       // Create 50 new stars with random positions
       for (int i = 0; i < 50; i++)
@@ -37,14 +43,32 @@ public:
          newStar.reset(width, height);
          starVect.push_back(newStar);
       }
+
+      // Create Lander
+      lander.reset(posUpperRight);
    }
 
    // display stuff on the screen
    void display();
 
    // turn
-   void turnRight() { a.add(-0.05); }
-   void turnLeft() { a.add(0.05); }
+   void moveRight(const Interface* pUI)
+   {
+      thrust.set(pUI);
+      lander.input(thrust, 1.62);  //gravity
+   }
+   void moveLeft(const Interface* pUI)
+   {
+      thrust.set(pUI);
+      lander.input(thrust, 1.62);  //gravity
+   }
+
+   //move
+   void moveUp(const Interface* pUI)
+   {
+      thrust.set(pUI);
+      lander.input(thrust, 1.62);  //gravity
+   }
 
    // blink phase for star
    void blink() { phase++; }
@@ -57,9 +81,11 @@ private:
    unsigned char phase = 0;
    Angle a;
    Ground ground;
+   Lander lander;
+   Thrust thrust;
    Position posUpperRight;
-   Position posLander;
-   Position posStar;
+   //Position posLander;
+   //Position posStar;
    vector<Star> starVect;
    double width;
    double height;
@@ -83,7 +109,7 @@ void Simulator::display()
    ground.draw(gout);
 
    // draw the lander
-   gout.drawLander(posLander, a.getRadians());
+   lander.draw(thrust, gout);
 }
 
 
@@ -102,9 +128,11 @@ void callBack(const Interface* pUI, void* p)
 
    // handle input
    if (pUI->isRight())
-      pSimulator->turnRight();   // rotate right here
+      pSimulator->moveRight(pUI);   // rotate right here and move right
    if (pUI->isLeft())
-      pSimulator->turnLeft();   // rotate left here
+      pSimulator->moveLeft(pUI);   // rotate left here and move left
+   if (pUI->isDown())
+      pSimulator->moveUp(pUI);     // slow down/move up
 
    // change phase
    pSimulator->blink();

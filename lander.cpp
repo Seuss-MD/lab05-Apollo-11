@@ -33,7 +33,7 @@ void Lander :: draw(const Thrust & thrust, ogstream & gout) const
 {
    bool bottom             =  thrust.isMain();
    bool clockwise          =  thrust.isClock();
-   bool counter   =  thrust.isCounter();
+   bool counter            =  thrust.isCounter();
 
    gout.drawLander(pos, angle.getRadians());
    gout.drawLanderFlames(pos, angle.getDegrees(), bottom, clockwise, counter );
@@ -47,6 +47,15 @@ void Lander :: draw(const Thrust & thrust, ogstream & gout) const
  ***************************************************************/
 Acceleration Lander :: input(const Thrust& thrust, double gravity)
 {
+   if (thrust.isClock())
+   {
+      angle.add(thrust.rotation());
+   }
+   if (thrust.isCounter())
+   {
+      angle.add(-1 * thrust.rotation());
+   }
+   
    Acceleration acceleration = Acceleration();
    acceleration.set(angle, thrust.mainEngineThrust());
    acceleration.addDDY(gravity);
