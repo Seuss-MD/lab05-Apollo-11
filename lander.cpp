@@ -32,11 +32,15 @@ void Lander :: reset(const Position & posUpperRight)
 void Lander :: draw(const Thrust & thrust, ogstream & gout) const
 {
    bool bottom             =  thrust.isMain();
+<<<<<<< HEAD
+   bool clock          =  thrust.isClock();
+=======
    bool clockwise          =  thrust.isClock();
+>>>>>>> 7c4dffc552fbe3a90c4625d728f2b3760c1b5111
    bool counter            =  thrust.isCounter();
 
    gout.drawLander(pos, angle.getRadians());
-   gout.drawLanderFlames(pos, angle.getDegrees(), bottom, clockwise, counter );
+   gout.drawLanderFlames(pos, angle.getDegrees(), bottom, clock, counter );
 }
 
 /***************************************************************
