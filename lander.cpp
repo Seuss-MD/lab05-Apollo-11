@@ -32,7 +32,11 @@ void Lander :: reset(const Position & posUpperRight)
 void Lander :: draw(const Thrust & thrust, ogstream & gout) const
 {
    bool bottom             =  thrust.isMain();
+<<<<<<< HEAD
    bool clock          =  thrust.isClock();
+=======
+   bool clockwise          =  thrust.isClock();
+>>>>>>> 7c4dffc552fbe3a90c4625d728f2b3760c1b5111
    bool counter            =  thrust.isCounter();
 
    gout.drawLander(pos, angle.getRadians());
@@ -47,6 +51,15 @@ void Lander :: draw(const Thrust & thrust, ogstream & gout) const
  ***************************************************************/
 Acceleration Lander :: input(const Thrust& thrust, double gravity)
 {
+   if (thrust.isClock())
+   {
+      angle.add(thrust.rotation());
+   }
+   if (thrust.isCounter())
+   {
+      angle.add(-1 * thrust.rotation());
+   }
+   
    Acceleration acceleration = Acceleration();
    acceleration.set(angle, thrust.mainEngineThrust());
    acceleration.addDDY(gravity);

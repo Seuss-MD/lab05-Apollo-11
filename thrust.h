@@ -40,16 +40,16 @@ public:
    }
 
    // reflect what is firing
-   bool isMain()    const { return true; }
-   bool isClock()   const { return true; }
-   bool isCounter() const { return true; }
+   bool isMain()    const { return mainEngine; }
+   bool isClock()   const { return clockwise; }
+   bool isCounter() const { return counterClockwise; }
 
    // set the thrusters
    void set(const Interface * pUI)
    {
-      mainEngine       = true;
-      clockwise        = true;
-      counterClockwise = true;
+      mainEngine       = pUI->isDown()  ? true : false;
+      clockwise        = pUI->isRight() ? true : false;
+      counterClockwise = pUI->isLeft()  ? true : false;
    }
 
 private:
