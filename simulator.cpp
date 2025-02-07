@@ -19,7 +19,8 @@
 #include <vector>
 using namespace std;
 
-#define GRAVITY 1.62
+#define GRAVITY -1.62
+#define LANDER_WIDTH 20
 
 /*************************************************************************
  * SIMULATOR
@@ -31,21 +32,22 @@ public:
    // set up the simulator and element positions
    Simulator(const Position& posUpperRight) :
       ground(posUpperRight),
-      //posLander(posUpperRight.getX() / 2.0, posUpperRight.getY() / 2.0),
-      width(posUpperRight.getX()), height(posUpperRight.getY()),
       lander(posUpperRight),
       thrust()
    {
+      this-> posUpperRight = posUpperRight;
+
       // Create 50 new stars with random positions
       for (int i = 0; i < 50; i++)
       {
          Star newStar;
-         newStar.reset(width, height);
+         newStar.reset(posUpperRight.getX(), posUpperRight.getY());
          starVect.push_back(newStar);
       }
 
       // Create Lander
       lander.reset(posUpperRight);
+
    }
 
    // display stuff on the screen
@@ -58,12 +60,14 @@ public:
       lander.input(thrust, GRAVITY);  //gravity
    }
 
+   
+
    // blink phase for star
    void blink() { phase++; }
 
-   // get width and height
-   double getWidth() { return width; }
-   double getHeight() { return height; }
+
+   //get start
+   Position getStartPos() {return posUpperRight;}
 
 private:
    unsigned char phase = 0;
@@ -72,11 +76,7 @@ private:
    Lander lander;
    Thrust thrust;
    Position posUpperRight;
-   //Position posLander;
-   //Position posStar;
    vector<Star> starVect;
-   double width;
-   double height;
 };
 
 /**********************************************************
@@ -96,9 +96,42 @@ void Simulator::display()
    // draw the ground
    ground.draw(gout);
 
+   if (ground.onPlatform(lander.getPosition(), LANDER_WIDTH))
+   {
+      if (lander.getSpeed() <= lander.getMaxSpeed())
+      {
+
+         lander.land();
+         cout << "landed " <<endl;
+      }
+      else
+      {
+        lander.crash();
+        cout << "Lander has crashed bcause speed was " <<lander.getSpeed() << endl;
+      }
+   };
+
    // draw the lander
-   lander.coast(lander.input(thrust, GRAVITY), 0.1);
-   lander.draw(thrust, gout);
+
+   if (ground.hitGround(lander.getPosition(), LANDER_WIDTH))
+   {
+      lander.crash();
+   }
+
+   if (lander.isFlying())
+   {
+      lander.coast(lander.input(thrust, GRAVITY), 1.0/30.0);
+      lander.draw(thrust, gout);
+   }
+
+   if (lander.isDead() || lander.isLanded())
+   {
+      /*if (pUI->isSpaceBar())
+      lander.reset(getStartPos());*/
+   }
+
+
+   
 }
 
 
@@ -112,14 +145,15 @@ void callBack(const Interface* pUI, void* p)
    // is the first step of every single callback function in OpenGL. 
    Simulator* pSimulator = (Simulator*)p;
 
+   pSimulator->move(pUI);
    // draw the game
    pSimulator->display();
 
    // handle input
-   pSimulator->move(pUI);
 
    // change phase
    pSimulator->blink();
+
 }
 
 /*********************************

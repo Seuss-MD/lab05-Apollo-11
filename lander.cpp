@@ -9,6 +9,7 @@
 
 #include "lander.h"
 #include "acceleration.h"
+#include <iostream>
 
  /***************************************************************
   * RESET
@@ -20,7 +21,7 @@ void Lander :: reset(const Position & posUpperRight)
    fuel = 5000.0;
    pos = Position(posUpperRight.getX()-1, posUpperRight.getY() * random(0.75,0.95));
    angle = Angle();
-   velocity = Velocity(random(-2, 2), random(-10, -4));
+   velocity = Velocity(random(-10, -4), random(-2, 2));
 }
 
 /***************************************************************
@@ -32,15 +33,14 @@ void Lander :: reset(const Position & posUpperRight)
 void Lander :: draw(const Thrust & thrust, ogstream & gout) const
 {
    bool bottom             =  thrust.isMain();
-<<<<<<< HEAD
-   bool clock          =  thrust.isClock();
-=======
-   bool clockwise          =  thrust.isClock();
->>>>>>> 7c4dffc552fbe3a90c4625d728f2b3760c1b5111
+
+   bool clock              =  thrust.isClock();
+
    bool counter            =  thrust.isCounter();
 
    gout.drawLander(pos, angle.getRadians());
-   gout.drawLanderFlames(pos, angle.getDegrees(), bottom, clock, counter );
+   if (fuel > 0.0)
+      gout.drawLanderFlames(pos, angle.getRadians(), bottom, clock, counter );
 }
 
 /***************************************************************
@@ -53,20 +53,32 @@ Acceleration Lander :: input(const Thrust& thrust, double gravity)
 {
    Acceleration acceleration = Acceleration();
 
-   if (thrust.isClock())
+   if (fuel > 0.0)
    {
-      angle.add(-1 * thrust.rotation());
+      if (thrust.isClock())
+      {
+
+         angle.add(thrust.rotation());
+         fuel -= 1.0;
+
+      }
+      if (thrust.isCounter())
+      {
+
+         angle.add(thrust.rotation());
+         fuel -= 1.0;
+
+      }
+      if (thrust.isMain())
+      {
+         fuel -= 10.0;
+         acceleration.set(angle, thrust.mainEngineThrust());
+         acceleration.setDDX(-acceleration.getDDX());
+      }
    }
-   if (thrust.isCounter())
-   {
-      angle.add(thrust.rotation());
-   }
-   if (thrust.isMain())
-   {
-      acceleration.set(angle, thrust.mainEngineThrust());
-   }
-   
+
    acceleration.addDDY(gravity);
+   
 
    return acceleration;
 }
@@ -79,5 +91,7 @@ void Lander :: coast(Acceleration & acceleration, double t)
 {
    pos.addX(velocity.getDX() * t + 0.5 * acceleration.getDDX() * t * t);
    pos.addY(velocity.getDY() * t + 0.5 * acceleration.getDDY() * t * t);
+   velocity.add(acceleration, t);
+   //cout << velocity.getDY() << endl;
 
 }
