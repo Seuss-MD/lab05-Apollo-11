@@ -29,45 +29,43 @@ class Lander
 private:
    Status   status;      // are we dead or not?
    Position pos;         // the location of the lander
-   Velocity velocity;           // the speed of the lander
+   Velocity velocity;    // the speed of the lander
    Angle    angle;       // the orientation of the lander
    double   fuel;        // amount of fuel remaining
-   
+
 public:
-  // to create a lander, we need to know something about the board
-  Lander(const Position & posUpperRight) : status(PLAYING), fuel(0.0), 
-                                           pos(posUpperRight.getX(), posUpperRight.getY()),
-                                           angle(Angle(0.0)), velocity(Velocity()){}
+   // to create a lander, we need to know something about the board
+   Lander(const Position& posUpperRight) : status(PLAYING), fuel(0.0),
+      pos(posUpperRight.getX(), posUpperRight.getY()),
+      angle(Angle(0.0)), velocity(Velocity()) {
+   }
 
-  // get the status of the lander
-  bool     isDead()         const { if (status == DEAD) return true; 
-                                    else return false;}
-  bool     isLanded()       const { if (status == SAFE) return true;
-                                    else return false;}
-  bool     isFlying()       const { if (status == PLAYING) return true; 
-                                    else return false;}
-  Position getPosition()    const { return pos;}
-  double   getSpeed()       const { return velocity.getSpeed(); }
-  int      getFuel()        const { return fuel;  }
-  int      getWidth()       const { return 20;   } //in meters
-  double   getMaxSpeed()    const { return 4; }    //in m/s
+   // get the status of the lander
+   bool     isDead()         const { return (status == DEAD) ? true : false; }
+   bool     isLanded()       const { return (status == SAFE) ? true : false; }
+   bool     isFlying()       const { return (status == PLAYING) ? true : false; }
+   Position getPosition()    const { return pos; }
+   double   getSpeed()       const { return velocity.getSpeed(); }
+   int      getFuel()        const { return fuel; }
+   int      getWidth()       const { return 20; }   //in meters
+   double   getMaxSpeed()    const { return 4; }   //in m/s
 
-  // reset the lander and its position
-  void reset(const Position& posUpperRight);
- 
-  // straighten the lander and put it on the ground
-  void land()     {status = SAFE; angle.setUp(); }
-  
-  // we are dead. Draw the lander upside down
-  void crash()    {status = DEAD; angle.setDown();}
+   // reset the lander and its position
+   void reset(const Position& posUpperRight);
 
-  // draw the lander on the screen
-  void draw(const Thrust & thrust, ogstream & gout) const;
- 
-  // handle input
-  Acceleration input(const Thrust & thrust, double gravity);
+   // straighten the lander and put it on the ground
+   void land() { status = SAFE; angle.setUp(); }
 
-  // what happens when we coast?
-  void coast(Acceleration & acceleration, double time);
+   // we are dead. Draw the lander upside down
+   void crash() { status = DEAD; angle.setDown(); }
+
+   // draw the lander on the screen
+   void draw(const Thrust& thrust, ogstream& gout) const;
+
+   // handle input
+   Acceleration input(const Thrust& thrust, double gravity);
+
+   // what happens when we coast?
+   void coast(Acceleration& acceleration, double time);
 
 };

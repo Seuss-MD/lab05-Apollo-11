@@ -9,17 +9,16 @@
 
 #include "lander.h"
 #include "acceleration.h"
-#include <iostream>
 
  /***************************************************************
   * RESET
   * Reset the lander and its position to start the game over
   ***************************************************************/
-void Lander :: reset(const Position & posUpperRight)
+void Lander::reset(const Position& posUpperRight)
 {
    status = PLAYING;
    fuel = 5000.0;
-   pos = Position(posUpperRight.getX()-1, posUpperRight.getY() * random(0.75,0.95));
+   pos = Position(posUpperRight.getX() - 1, posUpperRight.getY() * random(0.75, 0.95));
    angle = Angle();
    velocity = Velocity(random(-10, -4), random(-2, 2));
 }
@@ -30,44 +29,33 @@ void Lander :: reset(const Position & posUpperRight)
  * Turn on flames as needed
  * Flame on
  ***************************************************************/
-void Lander :: draw(const Thrust & thrust, ogstream & gout) const
+void Lander::draw(const Thrust& thrust, ogstream& gout) const
 {
-   bool bottom             =  thrust.isMain();
-
-   bool clock              =  thrust.isClock();
-
-   bool counter            =  thrust.isCounter();
+   bool bottom = thrust.isMain();
+   bool clockwise = thrust.isClock();
+   bool counterClockwise = thrust.isCounter();
 
    gout.drawLander(pos, angle.getRadians());
    if (fuel > 0.0)
-      gout.drawLanderFlames(pos, angle.getRadians(), bottom, clock, counter );
+      gout.drawLanderFlames(pos, angle.getRadians(), bottom, counterClockwise, clockwise);
 }
 
 /***************************************************************
  * INPUT
  * Accept input from the Neil Armstrong
  * Convert thrust and gravity into an acceleration object
- * Uses the angle 
+ * Uses the angle
  ***************************************************************/
-Acceleration Lander :: input(const Thrust& thrust, double gravity)
+Acceleration Lander::input(const Thrust& thrust, double gravity)
 {
    Acceleration acceleration = Acceleration();
 
    if (fuel > 0.0)
    {
-      if (thrust.isClock())
+      if (thrust.isClock() || thrust.isCounter())
       {
-
-         angle.add(thrust.rotation());
          fuel -= 1.0;
-
-      }
-      if (thrust.isCounter())
-      {
-
          angle.add(thrust.rotation());
-         fuel -= 1.0;
-
       }
       if (thrust.isMain())
       {
@@ -78,7 +66,6 @@ Acceleration Lander :: input(const Thrust& thrust, double gravity)
    }
 
    acceleration.addDDY(gravity);
-   
 
    return acceleration;
 }
@@ -87,11 +74,9 @@ Acceleration Lander :: input(const Thrust& thrust, double gravity)
  * COAST
  * What happens when we coast?
  *******************************************************************/
-void Lander :: coast(Acceleration & acceleration, double t)
+void Lander::coast(Acceleration& acceleration, double t)
 {
    pos.addX(velocity.getDX() * t + 0.5 * acceleration.getDDX() * t * t);
    pos.addY(velocity.getDY() * t + 0.5 * acceleration.getDDY() * t * t);
    velocity.add(acceleration, t);
-   //cout << velocity.getDY() << endl;
-
 }

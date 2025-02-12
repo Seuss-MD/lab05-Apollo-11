@@ -22,8 +22,11 @@ private:
    unsigned char phase;
 
 public:
-   void reset(double width, double height)   {pos.setX(random(0.0, width));
-                                              pos.setY(random(0.0, height));}
+   void reset(double width, double height) {
+      pos.setX(random(0.0, width));
+      pos.setY(random(0.0, height));
+      phase = random(0, 255);
+   }
 
    void draw(ogstream & gout)                {gout.drawStar(pos, phase++); }
 

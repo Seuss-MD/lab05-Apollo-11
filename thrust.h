@@ -14,15 +14,15 @@
 class TestLander;
 class TestThrust;
 
- /*****************************************************
-  * THRUST
-  * Represents activation of thrusters
-  *****************************************************/
+/*****************************************************
+ * THRUST
+ * Represents activation of thrusters
+ *****************************************************/
 class Thrust
 {
    friend TestLander;
    friend TestThrust;
-   
+
 public:
    // Thrust is initially turned off
    Thrust() : mainEngine(false), clockwise(false), counterClockwise(false) {}
@@ -37,13 +37,12 @@ public:
       if (counterClockwise)
          rotation += -0.1;
       return rotation;
-
    }
 
    // get main engine thrust in  m / s ^ 2
    double mainEngineThrust() const
    {
-      return 45000.0/15103.0;
+      return 45000.0 / 15103.0;
    }
 
    // reflect what is firing
@@ -52,12 +51,11 @@ public:
    bool isCounter() const { return counterClockwise; }
 
    // set the thrusters
-   void set(const Interface * pUI)
+   void set(const Interface* pUI)
    {
-      mainEngine        = pUI->isDown()   ? true : false;
-      clockwise         = pUI->isLeft()   ? true : false;
-      counterClockwise  = pUI->isRight()  ? true : false;
-
+      mainEngine = pUI->isDown() ? true : false;
+      clockwise = pUI->isLeft() ? true : false;
+      counterClockwise = pUI->isRight() ? true : false;
    }
 
 private:
